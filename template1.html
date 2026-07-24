@@ -247,7 +247,6 @@
     <script>
         const aside = document.querySelector('aside');
         function isLargeScreen() {
-
             const isLarge = window.innerWidth >= 900;
             if (isLarge) {
                 aside.classList.add('visible');
@@ -267,6 +266,7 @@
         toggleBar.addEventListener('click', () => {
             aside.classList.toggle('visible');
         });
+        
         // 监听过渡结束事件
         aside.addEventListener('transitionend', () => {
             if (main.offsetWidth < 100) {
