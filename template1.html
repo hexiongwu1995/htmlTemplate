@@ -291,6 +291,24 @@
             mainWidth();
         });
     </script>
+
+    <script>
+        // 生成标题id
+        const headers = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        function headersId(headers) {
+            headers.forEach((header, index) => {
+                let base = header.textContent.trim().replace(/[\s\-]+/g, "_").replace(/[^a-zA-Z0-9\u4e00-\u9fff\_]/g, "").replace(/^_+|_+$/g, "").replace(/_+/g, "_");
+                header.id = "header_" + base + "_" + index;
+            });
+        }
+    </script>
+
+    <script>
+        // 生成多级目录，挂载到nav中
+        const nav = document.querySelector('nav');
+        headersId(headers);
+        
+    </script>
 </body>
 
 </html>
