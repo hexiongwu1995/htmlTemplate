@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>模板文档</title>
     <link rel="stylesheet" href="./iconfont/iconfont.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.25.0/tocbot.css">
     <style>
         :root {
             --aside-bac-color: #eae5e5;
@@ -112,91 +111,13 @@
             margin: 0 auto;
         }
     </style>
-    <style>
-        /* 目录容器 */
-        .toc {
-            padding: 20px;
-            font-size: 14px;
-            overflow-y: auto;
-            max-height: 100vh;
-        }
-
-        /* 目录列表 */
-        .toc-list {
-            list-style: none;
-            padding-left: 0;
-            margin: 0;
-        }
-
-        .toc-list .toc-list {
-            padding-left: 15px;
-            /* 子目录缩进 */
-        }
-
-        /* 目录项 */
-        .toc-list-item {
-            margin: 5px 0;
-            line-height: 1.6;
-        }
-
-        /* 目录链接 */
-        .toc-link {
-            color: #333;
-            text-decoration: none;
-            display: block;
-            padding: 3px 0;
-            border-left: 2px solid transparent;
-            padding-left: 10px;
-            transition: all 0.2s;
-        }
-
-        .toc-link:hover {
-            color: #f74c00;
-            /* Rust 橙色 */
-            border-left-color: #f74c00;
-        }
-
-        /* 当前激活的章节 */
-        .is-active-link {
-            color: #f74c00;
-            font-weight: bold;
-            border-left-color: #f74c00;
-        }
-
-        /* 折叠按钮（Tocbot 自带） */
-        .toc-list-item.is-collapsed .toc-list {
-            display: none;
-        }
-
-        .toc-list-item.is-collapsible {
-            position: relative;
-        }
-
-        /* 可以添加自定义折叠图标 */
-        .toc-list-item.is-collapsible::before {
-            content: '▶';
-            position: absolute;
-            left: -15px;
-            font-size: 10px;
-            transition: transform 0.2s;
-            cursor: pointer;
-        }
-
-        .toc-list-item.is-collapsible.is-collapsed::before {
-            transform: rotate(0deg);
-        }
-
-        .toc-list-item.is-collapsible:not(.is-collapsed)::before {
-            transform: rotate(90deg);
-        }
-    </style>
 </head>
 
 <body>
 
     <div class="container">
         <aside>
-            <nav class="toc"></nav>
+            <nav></nav>
         </aside>
         <main>
             <header>
@@ -212,7 +133,7 @@
                 </span>
 
             </header>
-            <article class="js-toc-content">
+            <article>
             </article>
         </main>
     </div>
@@ -319,21 +240,9 @@
     </div>
 
     <script>
-        // 先复制内容到 article
         const hiddenContent = document.querySelector('.hidden-content');
         const article = document.querySelector('article');
         article.innerHTML = hiddenContent.innerHTML;
-
-        // 为所有标题生成唯一 ID（Tocbot 需要标题有 id 才能跳转）
-        const headers = article.querySelectorAll('h1, h2, h3, h4, h5, h6');
-        headers.forEach((header, index) => {
-            let base = header.textContent.trim()
-                .replace(/[\s\-]+/g, "_")
-                .replace(/[^a-zA-Z0-9\u4e00-\u9fff\_]/g, "")
-                .replace(/^_+|_+$/g, "")
-                .replace(/_+/g, "_");
-            header.id = "header_" + base + "_" + index;
-        });
     </script>
 
     <script>
@@ -383,45 +292,22 @@
         });
     </script>
 
-    <!-- Tocbot JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.25.0/tocbot.min.js"></script>
+    <script>
+        // 生成标题id
+        const headers = article.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        function headersId(headers) {
+            headers.forEach((header, index) => {
+                let base = header.textContent.trim().replace(/[\s\-]+/g, "_").replace(/[^a-zA-Z0-9\u4e00-\u9fff\_]/g, "").replace(/^_+|_+$/g, "").replace(/_+/g, "_");
+                header.id = "header_" + base + "_" + index;
+            });
+        }
+    </script>
 
     <script>
-        // 等待 DOM 完全加载后再初始化 Tocbot
-        document.addEventListener('DOMContentLoaded', function() {
-            tocbot.init({
-                // 目录挂载点
-                tocSelector: '.toc',
+        // 生成多级目录，挂载到nav中
+        const nav = document.querySelector('nav');
+        headersId(headers);
 
-                // 文章内容容器
-                contentSelector: '.js-toc-content',
-
-                // 要扫描的标题级别
-                headingSelector: 'h1, h2, h3, h4, h5, h6',
-
-                // 平滑滚动
-                scrollSmooth: true,
-                scrollSmoothDuration: 420,
-
-                // 层级折叠（类似 Rust By Example）
-                collapseDepth: 3,
-
-                // 当前章节高亮
-                positionFixedSelector: '.toc',
-
-                // 高亮样式类名
-                activeLinkClass: 'is-active-link',
-                listClass: 'toc-list',
-                listItemClass: 'toc-list-item',
-                linkClass: 'toc-link',
-
-                // 滚动容器（你的 main 是可滚动的）
-                scrollContainer: 'main',
-
-                // 固定头部偏移量（避开 sticky header）
-                headingsOffset: 60,
-            });
-        });
     </script>
 </body>
 
