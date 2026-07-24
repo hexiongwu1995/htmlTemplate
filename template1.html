@@ -8,41 +8,38 @@
     <link rel="stylesheet" href="./iconfont/iconfont.css">
     <style>
         :root {
-            --html-bac-color: #f0f0f0;
-            --body-bac-color: #000000;
-            --container-bac-color: #d6e7bb;
             --aside-bac-color: #eae5e5;
-            --main-bac-color: #f0f0f0;
             --header-bac-color: #dddddd;
             --article-bac-color: #fff;
 
             --iconfont-color: #000;
 
-            --html-margin: 5px;
-            --html-height: calc(100% - var(--html-margin) * 2);
-
+            --aside-width: 300px;
+            --aside-visible: 0;
         }
 
-        html {
-            background-color: var(--html-bac-color);
-            box-sizing: border-box;
-            margin: var(--html-margin);
-            height: var(--html-height);
-            padding: 10px;
+        aside.visible {
+            --aside-visible: 1;
         }
 
-        body {
-            background-color: var(--body-bac-color);
-            box-sizing: border-box;
+        html,
+        body,
+        .container,
+        aside,
+        main {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body,
+        .container {
+            width: 100%;
             height: 100%;
-            padding: 0px;
         }
 
         .container {
-            background-color: var(--container-bac-color);
-            box-sizing: border-box;
-            height: 100%;
             display: flex;
             flex-direction: row;
             justify-content: space-between;
@@ -50,22 +47,23 @@
         }
 
         aside {
-            background-color: var(--aside-bac-color);
             height: 100%;
-            width: 20%;
+            width: calc(var(--aside-width) * var(--aside-visible));
+            transition: width 0.3s ease;
+            background-color: var(--aside-bac-color);
+            flex-shrink: 0;
         }
 
         main {
-            box-sizing: border-box;
             height: 100%;
-            background-color: var(--main-bac-color);
-            width: 80%;
+            width: calc(100% - var(--aside-width)*var(--aside-visible));
             overflow-y: auto;
+            overflow-x: hidden;
         }
 
         header {
-            background-color: var(--header-bac-color);
             height: 50px;
+            background-color: var(--header-bac-color);
         }
 
         header {
@@ -82,6 +80,7 @@
         .iconfont {
             font-size: 16px;
             color: var(--iconfont-color);
+            cursor: pointer;
         }
 
         .pagetitle {
@@ -107,6 +106,9 @@
         article {
             background-color: var(--article-bac-color);
             padding: 10px;
+            max-width: 800px;
+            height: auto;
+            margin: 0 auto;
         }
     </style>
 </head>
@@ -242,6 +244,41 @@
         article.innerHTML = hiddenContent.innerHTML;
     </script>
 
+    <script>
+        const aside = document.querySelector('aside');
+        function isLargeScreen() {
+
+            const isLarge = window.innerWidth >= 900;
+            if (isLarge) {
+                aside.classList.add('visible');
+            } else {
+                aside.classList.remove('visible');
+            }
+        }
+        isLargeScreen();
+        window.addEventListener('resize', isLargeScreen);
+    </script>
+
+    <script>
+        const toggleBar = document.querySelector('.icon-bars');
+        const main = document.querySelector('main');
+        const pagetitle = document.querySelector('.pagetitle');
+        const collection = document.querySelector('.collection');
+        toggleBar.addEventListener('click', () => {
+            aside.classList.toggle('visible');
+        });
+        // 监听过渡结束事件
+        aside.addEventListener('transitionend', () => {
+            if (main.offsetWidth < 100) {
+                pagetitle.style.display = 'none';
+                collection.style.display = 'none';
+            } else {
+                pagetitle.style.display = '';
+                collection.style.display = '';
+            }
+        });
+
+    </script>
 </body>
 
 </html>
