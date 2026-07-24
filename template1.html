@@ -56,7 +56,7 @@
 
         main {
             height: 100%;
-            width: calc(100% - var(--aside-width)*var(--aside-visible));
+            width: calc(100% - var(--aside-width) * var(--aside-visible));
             overflow-y: auto;
             overflow-x: hidden;
         }
@@ -90,7 +90,7 @@
         }
 
         .collection {
-            width: 100px;
+            width: 130px;
             display: flex;
             flex-direction: row;
             justify-content: space-between;
@@ -126,8 +126,9 @@
                     <script>document.write(document.querySelector('title').textContent)</script>
                 </span>
                 <span class="collection">
+                    <span class="iconfont icon-Homehomepagemenu"></span>
                     <span class="iconfont icon-paintbrush"></span>
-                    <span class="iconfont icon-print"></span>
+                    <span class="iconfont icon-printer-fill"></span>
                     <span class="iconfont icon-github"></span>
                 </span>
 
@@ -255,29 +256,40 @@
             }
         }
         isLargeScreen();
-        window.addEventListener('resize', isLargeScreen);
     </script>
 
     <script>
-        const toggleBar = document.querySelector('.icon-bars');
         const main = document.querySelector('main');
         const pagetitle = document.querySelector('.pagetitle');
         const collection = document.querySelector('.collection');
-        toggleBar.addEventListener('click', () => {
-            aside.classList.toggle('visible');
-        });
-        
-        // 监听过渡结束事件
-        aside.addEventListener('transitionend', () => {
-            if (main.offsetWidth < 100) {
+        function mainWidth() {
+            if (main.offsetWidth <= 200) {
                 pagetitle.style.display = 'none';
                 collection.style.display = 'none';
             } else {
                 pagetitle.style.display = '';
                 collection.style.display = '';
             }
+        }
+        mainWidth();
+    </script>
+
+    <script>
+        const toggleBar = document.querySelector('.icon-bars');
+        toggleBar.addEventListener('click', () => {
+            aside.classList.toggle('visible');
         });
 
+        aside.addEventListener('transitionend', () => {
+            mainWidth();
+        });
+    </script>
+
+    <script>
+        window.addEventListener('resize', () => {
+            isLargeScreen();
+            mainWidth();
+        });
     </script>
 </body>
 
