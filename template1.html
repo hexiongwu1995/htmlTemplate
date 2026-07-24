@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模板文档</title>
+    <link rel="stylesheet" href="./iconfont/iconfont.css">
+    <style>
+        :root {
+            --html-bac-color: #f0f0f0;
+            --body-bac-color: #000000;
+            --container-bac-color: #d6e7bb;
+            --aside-bac-color: #eae5e5;
+            --main-bac-color: #f0f0f0;
+            --header-bac-color: #dddddd;
+            --article-bac-color: #fff;
+
+            --iconfont-color: #000;
+
+            --html-margin: 5px;
+            --html-height: calc(100% - var(--html-margin) * 2);
+
+        }
+
+        html {
+            background-color: var(--html-bac-color);
+            box-sizing: border-box;
+            margin: var(--html-margin);
+            height: var(--html-height);
+            padding: 10px;
+        }
+
+        body {
+            background-color: var(--body-bac-color);
+            box-sizing: border-box;
+            margin: 0;
+            height: 100%;
+            padding: 0px;
+        }
+
+        .container {
+            background-color: var(--container-bac-color);
+            box-sizing: border-box;
+            height: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        aside {
+            background-color: var(--aside-bac-color);
+            height: 100%;
+            width: 20%;
+        }
+
+        main {
+            box-sizing: border-box;
+            height: 100%;
+            background-color: var(--main-bac-color);
+            width: 80%;
+            overflow-y: auto;
+        }
+
+        header {
+            background-color: var(--header-bac-color);
+            height: 50px;
+        }
+
+        header {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .iconfont {
+            font-size: 16px;
+            color: var(--iconfont-color);
+        }
+
+        .pagetitle {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .collection {
+            width: 100px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: nowrap;
+            overflow: hidden;
+        }
+
+        .hidden-content {
+            display: none;
+        }
+
+        article {
+            background-color: var(--article-bac-color);
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <aside>
+            <nav></nav>
+        </aside>
+        <main>
+            <header>
+                <span class="iconfont icon-bars"></span>
+                <span class="iconfont pagetitle">
+                    <script>document.write(document.querySelector('title').textContent)</script>
+                </span>
+                <span class="collection">
+                    <span class="iconfont icon-paintbrush"></span>
+                    <span class="iconfont icon-print"></span>
+                    <span class="iconfont icon-github"></span>
+                </span>
+
+            </header>
+            <article>
+            </article>
+        </main>
+    </div>
+
+
+    <div class="hidden-content">
+        <section>
+            <h1>简介</h1>
+            <p>1900年：普朗克提出能量量子化假说</p>
+            <p>事件：马克斯·普朗克为解释黑体辐射实验数据，假设电磁振子的能量只能以离散单位（"量子"）发射或吸收。</p>
+            <p>意义：标志量子理论的诞生。</p>
+            <h2>量子化假说简介</h2>
+            <p>1900年：普朗克提出能量量子化假说</p>
+            <p>事件：马克斯·普朗克为解释黑体辐射实验数据，假设电磁振子的能量只能以离散单位（"量子"）发射或吸收。</p>
+            <p>意义：标志量子理论的诞生。</p>
+            <ol>
+                <li>1905年：爱因斯坦提出光量子假说</li>
+                <li>
+                    1907年：爱因斯坦提出固体热容理论
+                    <ol>
+                        <li>1900年：普朗克提出能量量子化假说</li>
+                        <li>意义：标志量子理论的诞生。</li>
+                    </ol>
+                </li>
+            </ol>
+
+            <h2>黑体辐射 1900</h2>
+            <p>当普朗克将自己的假设付诸实施时，他推导出了如今被称为普朗克分布（Planck distribution）的黑体辐射谱态密度公式：$$\displaystyle \rho_R(\lambda) =
+                \frac{8\pi hc}{\lambda^5} \frac{1}{e^{hc/\lambda kT} - 1}$$</p>
+
+            <h3>历史上引入黑体辐射概念的原因</h3>
+            <p>黑体辐射（Blackbody Radiation）这一概念的引入，并非出于纯粹的理论兴趣，而是源于19世纪工业革命背景下对热辐射现象的实验需求与理论解释之间的深刻矛盾。其历史动因可归纳为以下几个关键方面。
+            </p>
+
+            <h4>黑体辐射与物质热辐射的本质</h4>
+            <p>热辐射是指实际物体由于其内部带电粒子（主要是电子）的热运动而发射出的电磁波。所有温度高于绝对零度的物体都会发出热辐射。</p>
+
+            <h3>各向同性的均匀辐射场</h3>
+            <p>一、严格物理定义<br />各向同性的均匀辐射场（isotropic and homogeneous radiation field）通常指：在某一空间区域内任意一点 r，辐射强度 I 对所有传播方向 n
+                都相同，并且与空间位置无关。</p>
+
+            <h3>Stefan-Bolzmann定律的证明</h3>
+            <p>已知：对于黑体辐射，普朗克分布的谱能量密度公式。推导辐射出射度M的数学表达式，即Stefan-Bolzmann定律。</p>
+
+            <h3>辐射出射度与辐射强度的关系</h3>
+            <p>以处于热平衡状态的带孔空腔为例，假设空腔内部是各向同性的均匀辐射场，推导小孔处辐射出射度与辐射强度的数学关系。</p>
+            <p>辐射强度定义为：在空间某一点处，沿某一给定传播方向 n，单位时间内，通过垂直于该方向的单位面积、落入单位立体角内的辐射能量。</p>
+
+            <h4>韦恩位移定律的证明</h4>
+            <p>求出给定温度下普朗克分布取最大值时所对应的波长，并证明在短波长极限下，该表达式可简化为维恩位移定律。</p>
+            <p>普朗克分布（Planck distribution）的黑体辐射谱态密度公式为：</p>
+
+            <h2>光电效应1905</h2>
+            <p>在1905-1906年那段成果极为丰硕的时期，爱因斯坦不仅提出了他的热容理论和狭义相对论，还抽时间对现代物理学做出了另一项根本性贡献。</p>
+
+            <h3>康普顿效应公式的证明</h3>
+            <p>基于能量和线性动量守恒定律，推导康普顿效应公式。</p>
+
+            <h3>X射线与物质的交互作用</h3>
+            <p>X射线是一种高能电磁辐射，具有以下主要特征：<br />波长短：范围约为$0.01 \sim 10$ nm（介于紫外线和γ射线之间），典型诊断X射线波长在相应范围内。</p>
+        </section>
+
+        <section>
+
+            <h1>固体热容1907</h1>
+            <p>1819年，科学看起来有着一种欺骗性的简洁。</p>
+
+            <h2>爱因斯坦热容公式的证明</h2>
+            <p>推导爱因斯坦关于谐振子集合热容的公式。为此，请使用量子力学的结果。</p>
+
+            <h3>爱因斯坦热容函数的近似</h3>
+            <p>求出爱因斯坦热容函数在 (a) 低温和 (b) 高温下的近似形式。</p>
+
+            <h3>德拜热容函数的高低温极限</h3>
+
+            <h4>德拜热容函数的低温极限</h4>
+            <p>归一化德拜热容函数定义为相应表达式。</p>
+
+            <h4>德拜热容函数的高温极限</h4>
+            <p>归一化德拜热容函数定义为相应表达式。</p>
+
+            <h4>数值积分求解德拜热容函数的坐标</h4>
+
+            <h5>归一化德拜热容函数的性质</h5>
+            <p>归一化德拜热容函数定义为相应表达式。</p>
+
+            <h5>求解思路与数值积分方法</h5>
+            <p>为了得到精确的曲线，我们需要完成以下步骤：定义被积函数，我们需要定义积分内部的函数。</p>
+
+            <h5>绘制EinsteinDebye热容曲线</h5>
+            <p>归一化德拜热容函数定义为相应表达式。</p>
+
+            <h6>物质热容的本质</h6>
+            <p>物质热容的本质源于其内部微观自由度对能量的储存能力。</p>
+
+            <h4>能量均分定理与自由度</h4>
+
+            <p>什么是自由度（Degrees of Freedom）?</p>
+            <p>在统计力学和热力学中，自由度是指描述一个系统微观状态所需的独立坐标或动量变量的数量。对于一个由粒子组成的系统，自由度可分为以下几类。</p>
+
+            <h4>爱因斯坦固体的摩尔熵</h4>
+            <p>计算爱因斯坦固体的摩尔熵。请对该积分进行数值计算。</p>
+        </section>
+    </div>
+
+    <script>
+        const hiddenContent = document.querySelector('.hidden-content');
+        const article = document.querySelector('article');
+        article.innerHTML = hiddenContent.innerHTML;
+    </script>
+
+</body>
+
+</html>
