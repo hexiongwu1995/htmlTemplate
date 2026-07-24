@@ -294,7 +294,7 @@
 
     <script>
         // 生成标题id
-        const headers = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        const headers = article.querySelectorAll('h1, h2, h3, h4, h5, h6');
         function headersId(headers) {
             headers.forEach((header, index) => {
                 let base = header.textContent.trim().replace(/[\s\-]+/g, "_").replace(/[^a-zA-Z0-9\u4e00-\u9fff\_]/g, "").replace(/^_+|_+$/g, "").replace(/_+/g, "_");
