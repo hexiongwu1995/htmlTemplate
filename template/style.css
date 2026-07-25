@@ -33,9 +33,14 @@
 
         html {
             font-family: 'Arial','Microsoft YaHei', 'KaiTi', sans-serif;
-            font-size: 14px;
         }
-        
+
+        @media screen and (max-width: 600px) {
+            html {
+                font-size: 14px;
+            }
+        }
+
         body {
             overflow: hidden;
             color: var(--font-color);
