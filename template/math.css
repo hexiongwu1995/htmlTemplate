@@ -1,5 +1,5 @@
         span.math {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
         }
 
         span.math-space {
@@ -11,4 +11,5 @@
 
         div.math {
             text-align: center;
+            font-size: 0.8rem;
         }
