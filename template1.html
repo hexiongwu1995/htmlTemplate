@@ -499,6 +499,42 @@
                 header.id = "header_" + base + "_" + index;
             });
         }
+
+        // 为article中的标题添加多级序号
+        function addHeaderNumbers(headers) {
+            const indices = [0, 0, 0, 0, 0, 0, 0]; // 索引数组，支持h1-h6
+            let prevLevel = 0;
+
+            headers.forEach((header) => {
+                const level = parseInt(header.tagName.charAt(1));
+
+                // 重置更深级别的计数器
+                for (let i = level + 1; i <= 6; i++) {
+                    indices[i] = 0;
+                }
+
+                // 增加当前级别的计数器
+                indices[level]++;
+
+                // 生成序号字符串
+                const numberParts = [];
+                for (let i = 1; i <= level; i++) {
+                    if (indices[i] > 0) {
+                        numberParts.push(indices[i]);
+                    }
+                }
+                const numberStr = numberParts.join('.');
+
+                // 在标题文本前添加序号
+                const originalText = header.textContent.trim();
+                // 检查是否已经有序号前缀
+                if (!/^\d+(\.\d+)*\.?\s/.test(originalText)) {
+                    header.textContent = numberStr + ' ' + originalText;
+                }
+
+                prevLevel = level;
+            });
+        }
     </script>
 
     <script>
@@ -510,6 +546,8 @@
         // headers变量定义在前面的script标签中：const headers = article.querySelectorAll('h1, h2, h3, h4, h5, h6');
         // 为所有标题生成唯一ID
         headersId(headers);
+        // 为所有标题添加多级序号
+        addHeaderNumbers(headers);
         
         /**
          * 构建目录树数据结构
