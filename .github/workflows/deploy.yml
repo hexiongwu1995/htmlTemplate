@@ -6,7 +6,7 @@ on:
       - main
     paths: 
       - 'iconfont/**'
-      - 'template1.html'
+      - 'template/**'
       - '.github/workflows/deploy.yml'
 
 jobs:

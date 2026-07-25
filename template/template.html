@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template</title>
+    <link rel="stylesheet" href="../iconfont/iconfont.css">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./math.css">
+    <script src="./mathjax.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@4/startup.js" defer></script>
+
+</head>
+
+<body>
+    <div class="container">
+        <aside>
+            <nav></nav>
+        </aside>
+        <div class="overlay"></div>
+        <main>
+            <header>
+                <span class="iconfont icon-bars"></span>
+                <span class="iconfont pagetitle">
+                    <script>document.write(document.querySelector('title').textContent)</script>
+                </span>
+                <span class="collection">
+                    <span class="iconfont icon-Homehomepagemenu"></span>
+                    <span class="iconfont icon-paintbrush"></span>
+                    <span class="iconfont icon-printer-fill"></span>
+                    <span class="iconfont icon-github"></span>
+                </span>
+
+            </header>
+            <article>
+            </article>
+        </main>
+    </div>
+
+
+    <div class="hidden-content">
+        <section>
+            <h1>模板</h1>
+            <p>这是一个行内数学公式：<span class="math">`sum_(i=1)^n i^3=((n(n+1))/2)^2`</span> </p>
+            <p>
+                <span class="math-space">
+                    <span class="text">这是一个块级数学公式：</span>
+                    <span class="math">`sum_(i=1)^n i^3=((n(n+1))/2)^2`</span>
+                    <span class="text">这是末尾内容</span>
+                </span>
+            </p>
+            <p>下面是一个独立行块级公式：<div class="math">`sum_(i=1)^n i^3=((n(n+1))/2)^2`</div></p>
+        </section>
+    </div>
+    <script src="./script.js"></script>
+</body>
+
+</html>
