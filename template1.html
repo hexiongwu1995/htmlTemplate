@@ -16,6 +16,7 @@
 
             --aside-width: 300px;
             --aside-visible: 0;
+            --font-color: #333333;
         }
 
         aside.visible {
@@ -41,6 +42,7 @@
 
         body {
             overflow: hidden;
+            color: var(--font-color);
         }
 
         .container {
@@ -153,6 +155,12 @@
             max-width: 800px;
             height: auto;
             margin: 0 auto;
+            padding-bottom: 400px;
+        }
+
+        .header-number {
+            font-weight: 500;
+            margin-right: 6px;
         }
     </style>
     <style>
@@ -738,6 +746,36 @@
         
         // 初始化激活状态
         updateActiveTocItem();
+        
+        // ==================== 为文章标题添加多级序号 ====================
+        
+        /**
+         * 为文章中的标题添加多级序号
+         * @param {Array} tree - 目录树数组
+         * @param {Array} indices - 当前索引路径
+         * @param {number} currentLevel - 当前层级
+         */
+        function addNumberingToHeaders(tree, indices = [0], currentLevel = 1) {
+            tree.forEach((item, index) => {
+                const newIndices = [...indices];
+                newIndices[currentLevel] = index + 1;
+                const number = generateNumber(currentLevel, newIndices);
+                
+                const headerElement = document.getElementById(item.id);
+                if (headerElement) {
+                    const numberSpan = document.createElement('span');
+                    numberSpan.className = 'header-number';
+                    numberSpan.textContent = number + ' ';
+                    headerElement.insertBefore(numberSpan, headerElement.firstChild);
+                }
+                
+                if (item.children.length > 0) {
+                    addNumberingToHeaders(item.children, newIndices, currentLevel + 1);
+                }
+            });
+        }
+        
+        addNumberingToHeaders(tocTree);
         
         // ==================== 多级目录生成完成 ====================
     </script>
