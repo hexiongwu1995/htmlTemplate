@@ -7,9 +7,18 @@
             flex-direction: row;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         div.math {
             text-align: center;
             font-size: 0.8rem;
+        }
+        @media screen and (max-width: 899px) {
+            span.math {
+                font-size: 0.6rem;
+            }
+            div.math {
+                font-size: 0.6rem;
+            }
         }
