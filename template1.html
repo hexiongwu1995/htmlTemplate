@@ -112,8 +112,150 @@
         }
     </style>
     <style>
-        /* 多级目录样式 */
+        /* ==================== 多级目录样式 ==================== */
         
+        /* 目录容器基础样式 */
+        nav {
+            height: 100%;
+            overflow-y: auto;
+            padding: 20px 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        
+        /* 有序列表重置样式 */
+        nav ol {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            counter-reset: toc-counter;
+        }
+        
+        /* 嵌套列表缩进 */
+        nav ol ol {
+            padding-left: 20px;
+        }
+        
+        /* 目录项基础样式 */
+        nav li {
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* 目录项容器 - 包含展开按钮和链接 */
+        nav .toc-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* 两端对齐：文字靠左，图标靠右 */
+            padding: 8px 16px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        /* 目录项悬停效果 */
+        nav .toc-item:hover {
+            background-color: #e8e8e8;
+        }
+        
+        nav .toc-item:hover a {
+            color: #000;
+        }
+        
+        /* 目录链接通用样式 */
+        nav a {
+            display: flex;
+            align-items: center;
+            color: #333;
+            text-decoration: none;
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+            min-width: 0;
+        }
+        
+        /* 当前激活章节高亮 */
+        nav a.active {
+            color: #007acc;
+            font-weight: 500;
+        }
+        
+        /* 展开/折叠按钮样式 */
+        nav .toggle-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            margin-right: 6px;
+            font-size: 10px;
+            color: #666;
+            transition: transform 0.2s ease;
+            flex-shrink: 0;
+        }
+        
+        /* 展开状态箭头旋转 */
+        nav .toggle-btn.expanded {
+            transform: rotate(90deg);
+        }
+        
+        /* 叶子节点（无子项）占位 */
+        nav .toggle-btn.leaf {
+            visibility: hidden;
+        }
+        
+        /* 多级序号样式 */
+        nav .toc-number {
+            margin-right: 8px;
+            color: #666;
+            font-weight: 400;
+            flex-shrink: 0;
+        }
+        
+        /* 当前激活项序号颜色 */
+        nav a.active .toc-number {
+            color: #007acc;
+        }
+        
+        /* 层级字体大小递减 - 使用类选择器更精确 */
+        nav .toc-children > li > .toc-item > a {
+            font-size: 13px;
+        }
+        
+        nav .toc-children > li > .toc-children > li > .toc-item > a {
+            font-size: 12px;
+        }
+        
+        /* 默认折叠子目录（h2及以下） */
+        nav .toc-children {
+            display: none;
+        }
+        
+        /* 展开状态的子目录 */
+        nav .toc-children.expanded {
+            display: block;
+        }
+        
+        /* 滚动条样式优化 */
+        nav::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        nav::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        nav::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 3px;
+        }
+        
+        nav::-webkit-scrollbar-thumb:hover {
+            background: #999;
+        }
+        
+        /* ==================== 多级目录样式结束 ==================== */
     </style>
 </head>
 
@@ -308,10 +450,244 @@
     </script>
 
     <script>
-        // 生成多级目录，挂载到nav中
+        // ==================== 生成多级目录，挂载到nav中 ====================
+        
+        // 获取nav容器（用于挂载目录）
         const nav = document.querySelector('nav');
+        
+        // headers变量定义在前面的script标签中：const headers = article.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        // 为所有标题生成唯一ID
         headersId(headers);
-
+        
+        /**
+         * 构建目录树数据结构
+         * @param {NodeList} headers - 所有标题元素
+         * @returns {Array} 目录树数组
+         */
+        function buildTocTree(headers) {
+            const tree = [];
+            const stack = [];
+            
+            headers.forEach((header, index) => {
+                const level = parseInt(header.tagName.charAt(1));
+                const item = {
+                    id: header.id,
+                    text: header.textContent.trim(),
+                    level: level,
+                    children: []
+                };
+                
+                // 找到正确的父节点
+                while (stack.length > 0 && stack[stack.length - 1].level >= level) {
+                    stack.pop();
+                }
+                
+                if (stack.length === 0) {
+                    tree.push(item);
+                } else {
+                    stack[stack.length - 1].children.push(item);
+                }
+                
+                stack.push(item);
+            });
+            
+            return tree;
+        }
+        
+        /**
+         * 生成多级序号
+         * @param {number} level - 标题层级
+         * @param {Array} indices - 各级索引数组
+         * @returns {string} 序号字符串
+         */
+        function generateNumber(level, indices) {
+            return indices.slice(1, level + 1).join('.');
+        }
+        
+        /**
+         * 递归渲染目录树
+         * @param {Array} tree - 目录树数组
+         * @param {HTMLElement} container - 容器元素
+         * @param {Array} indices - 当前索引路径
+         * @param {number} currentLevel - 当前层级
+         */
+        function renderTocTree(tree, container, indices = [0], currentLevel = 1) {
+            const ol = document.createElement('ol');
+            
+            tree.forEach((item, index) => {
+                const li = document.createElement('li');
+                const newIndices = [...indices];
+                newIndices[currentLevel] = index + 1;
+                const number = generateNumber(currentLevel, newIndices);
+                
+                // 判断是否有可显示的子节点
+                const hasVisibleChildren = item.children.length > 0 && currentLevel < 3;
+                
+                // 创建展开/折叠按钮（仅 h1 和 h2 显示）
+                const toggleBtn = document.createElement('span');
+                toggleBtn.className = 'toggle-btn' + (!hasVisibleChildren ? ' leaf' : '');
+                toggleBtn.innerHTML = '▶';
+                // 绑定展开/折叠事件
+                if (hasVisibleChildren) {
+                    toggleBtn.addEventListener('click', (e) => {
+                        e.stopPropagation(); // 阻止事件冒泡
+                        handleToggleClick(toggleBtn, li);
+                    });
+                }
+                
+                // 创建链接元素（包含序号和文字）
+                const link = document.createElement('a');
+                link.href = '#' + item.id;
+                link.dataset.target = item.id;
+                link.dataset.level = currentLevel;
+                
+                // 创建序号
+                const numSpan = document.createElement('span');
+                numSpan.className = 'toc-number';
+                numSpan.textContent = number;
+                
+                // 创建文本
+                const textSpan = document.createElement('span');
+                textSpan.className = 'toc-text';
+                textSpan.textContent = item.text;
+                textSpan.style.overflow = 'hidden';
+                textSpan.style.textOverflow = 'ellipsis';
+                textSpan.style.whiteSpace = 'nowrap';
+                
+                // 组装链接
+                link.appendChild(numSpan);
+                link.appendChild(textSpan);
+                
+                // 创建目录项容器，包含链接和按钮（按钮在文字后面）
+                const tocItem = document.createElement('div');
+                tocItem.className = 'toc-item';
+                tocItem.appendChild(link);      // 先添加链接（靠左）
+                tocItem.appendChild(toggleBtn); // 再添加按钮（靠右）
+                li.appendChild(tocItem);
+                
+                // 递归渲染子目录（最多渲染到h3，即currentLevel <= 2）
+                if (item.children.length > 0 && currentLevel < 3) {
+                    const childOl = renderTocTree(item.children, li, newIndices, currentLevel + 1);
+                    // 默认折叠h2及以下的子目录
+                    if (currentLevel >= 1) {
+                        childOl.classList.add('toc-children');
+                    }
+                }
+                
+                ol.appendChild(li);
+            });
+            
+            container.appendChild(ol);
+            return ol;
+        }
+        
+        /**
+         * 处理展开/折叠按钮点击事件
+         * @param {HTMLElement} toggleBtn - 展开/折叠按钮
+         * @param {HTMLElement} li - 目录项li元素
+         */
+        function handleToggleClick(toggleBtn, li) {
+            const childOl = li.querySelector('ol');
+            if (!childOl) return;
+            
+            const isExpanded = childOl.classList.contains('expanded');
+            
+            if (isExpanded) {
+                childOl.classList.remove('expanded');
+                toggleBtn.classList.remove('expanded');
+            } else {
+                childOl.classList.add('expanded');
+                toggleBtn.classList.add('expanded');
+            }
+        }
+        
+        /**
+         * 处理目录项点击事件（仅处理链接跳转）
+         * @param {Event} e - 点击事件
+         */
+        function handleTocClick(e) {
+            const link = e.currentTarget;
+            
+            // 平滑滚动到目标位置
+            const targetId = link.dataset.target;
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                e.preventDefault();
+                
+                // 计算滚动位置，减去 header 高度（50px）和额外间距（20px），避免标题被 header 盖住
+                const headerHeight = 50;
+                const offset = 20;
+                const targetPosition = targetElement.offsetTop - headerHeight - offset;
+                
+                // main变量定义在前面的script标签中
+                main.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+                
+                // 更新URL hash
+                history.pushState(null, null, '#' + targetId);
+            }
+        }
+        
+        /**
+         * 更新当前激活的目录项
+         * 仅高亮当前可见的章节，不自动展开/折叠目录
+         */
+        function updateActiveTocItem() {
+            // main变量定义在前面的script标签中：const main = document.querySelector('main');
+            const scrollPos = main.scrollTop + 100;
+            let currentHeader = null;
+            
+            // 找到当前可见的标题
+            headers.forEach(header => {
+                const headerTop = header.offsetTop;
+                if (headerTop <= scrollPos) {
+                    currentHeader = header;
+                }
+            });
+            
+            // 移除所有激活状态
+            nav.querySelectorAll('a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // 激活当前项（仅高亮，不自动展开父级目录）
+            if (currentHeader) {
+                const activeLink = nav.querySelector(`a[data-target="${currentHeader.id}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active');
+                }
+            }
+        }
+        
+        // ==================== 初始化目录 ====================
+        
+        // 构建并渲染目录树
+        const tocTree = buildTocTree(headers);
+        renderTocTree(tocTree, nav);
+        
+        // 绑定点击事件
+        nav.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', handleTocClick);
+        });
+        
+        // 监听滚动事件，使用节流优化性能
+        let ticking = false;
+        main.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    updateActiveTocItem();
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        });
+        
+        // 初始化激活状态
+        updateActiveTocItem();
+        
+        // ==================== 多级目录生成完成 ====================
     </script>
 </body>
 
