@@ -111,6 +111,127 @@
             margin: 0 auto;
         }
     </style>
+    <style>
+        /* 目录样式 - 侧边栏导航树 */
+        
+        /* 目录容器整体样式 */
+        nav.toc {
+            padding: 20px 10px;
+            font-size: 14px;
+            max-height: calc(100vh - 50px);
+            overflow-y: auto;
+        }
+
+        /* 目录标题 */
+        nav.toc > .toc-title {
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #555;
+            padding: 10px 15px 5px;
+            letter-spacing: 0.5px;
+        }
+
+        /* 目录列表容器 - 移除默认列表样式 */
+        nav.toc ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 目录项样式 */
+        nav.toc li {
+            margin: 2px 0;
+            position: relative;
+        }
+
+        /* 目录链接样式 */
+        nav.toc a {
+            display: block;
+            text-decoration: none;
+            color: #333;
+            padding: 6px 15px;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            line-height: 1.4;
+            cursor: pointer;
+        }
+
+        /* 悬停效果 */
+        nav.toc a:hover {
+            color: #e04e4e;
+            background-color: rgba(0, 0, 0, 0.03);
+            border-left-color: #e04e4e;
+        }
+
+        /* 激活状态 - 当前查看的标题 */
+        nav.toc a.active {
+            color: #e04e4e;
+            border-left-color: #e04e4e;
+            background-color: rgba(224, 78, 78, 0.08);
+            font-weight: 500;
+        }
+
+        /* 不同级别的缩进 - 使用data-level属性 */
+        nav.toc a[data-level="1"] {
+            padding-left: 15px;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        nav.toc a[data-level="2"] {
+            padding-left: 30px;
+            font-size: 14px;
+        }
+
+        nav.toc a[data-level="3"] {
+            padding-left: 45px;
+            font-size: 13px;
+            color: #555;
+        }
+
+        nav.toc a[data-level="4"] {
+            padding-left: 60px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        nav.toc a[data-level="5"] {
+            padding-left: 75px;
+            font-size: 12px;
+            color: #777;
+        }
+
+        nav.toc a[data-level="6"] {
+            padding-left: 90px;
+            font-size: 12px;
+            color: #888;
+        }
+
+        /* 嵌套列表的显示/隐藏（可选的折叠功能） */
+        nav.toc ul ul {
+            display: block;
+        }
+
+        /* 滚动条美化 */
+        nav.toc::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        nav.toc::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        nav.toc::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        nav.toc::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+    </style>
 </head>
 
 <body>
@@ -292,7 +413,7 @@
         });
     </script>
 
-    <!-- <script>
+    <script>
         // 生成标题id
         const headers = article.querySelectorAll('h1, h2, h3, h4, h5, h6');
         function headersId(headers) {
@@ -308,7 +429,166 @@
         const nav = document.querySelector('nav');
         headersId(headers);
 
-    </script> -->
+        /* ==================== 目录生成逻辑 ====================
+         * 功能：从article中提取所有标题(h1-h6)，生成多级目录树
+         * 结构：使用嵌套的ul>li>a结构，支持点击跳转和滚动高亮
+         */
+        
+        // 为nav添加toc类名，便于CSS样式应用
+        nav.classList.add('toc');
+
+        // 创建目录标题元素
+        const tocTitle = document.createElement('div');
+        tocTitle.className = 'toc-title';
+        tocTitle.textContent = '目录';
+        nav.appendChild(tocTitle);
+
+        // 创建目录列表容器
+        const tocList = document.createElement('ul');
+        
+        // 获取所有标题并按级别分组
+        function buildTocTree(headers) {
+            // 结果数组，每个元素代表一个顶级标题及其子标题
+            const tree = [];
+            // 栈用于追踪当前路径上的标题级别
+            const stack = [];
+            
+            headers.forEach(header => {
+                // 从标签名提取级别 (h1=1, h2=2, ...)
+                const level = parseInt(header.tagName.charAt(1));
+                const headerInfo = {
+                    element: header,
+                    level: level,
+                    text: header.textContent.trim(),
+                    id: header.id,
+                    children: []
+                };
+                
+                // 找到合适的父级级别
+                while (stack.length > 0 && stack[stack.length - 1].level >= level) {
+                    stack.pop();
+                }
+                
+                if (stack.length === 0) {
+                    // 顶级标题
+                    tree.push(headerInfo);
+                } else {
+                    // 作为子标题添加到父级
+                    stack[stack.length - 1].children.push(headerInfo);
+                }
+                
+                stack.push(headerInfo);
+            });
+            
+            return tree;
+        }
+
+        // 递归渲染目录树为HTML
+        function renderTocTree(tree, parentUl) {
+            tree.forEach(item => {
+                // 创建列表项
+                const li = document.createElement('li');
+                
+                // 创建链接
+                const a = document.createElement('a');
+                a.href = '#' + item.id;
+                a.textContent = item.text;
+                a.setAttribute('data-level', item.level);
+                
+                // 点击事件：平滑滚动到目标标题
+                a.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetHeader = document.getElementById(item.id);
+                    if (targetHeader) {
+                        // 平滑滚动到目标位置
+                        targetHeader.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        // 更新URL但不触发页面跳转
+                        history.pushState(null, '', '#' + item.id);
+                    }
+                });
+                
+                li.appendChild(a);
+                
+                // 如果有子标题，递归渲染
+                if (item.children.length > 0) {
+                    const childUl = document.createElement('ul');
+                    renderTocTree(item.children, childUl);
+                    li.appendChild(childUl);
+                }
+                
+                parentUl.appendChild(li);
+            });
+        }
+
+        // 构建并渲染目录树
+        const tocTree = buildTocTree(headers);
+        renderTocTree(tocTree, tocList);
+        nav.appendChild(tocList);
+
+        /* ==================== 滚动高亮逻辑 ====================
+         * 功能：监听页面滚动，更新当前可见区域的目录项高亮状态
+         */
+
+        // 获取所有目录链接
+        const tocLinks = nav.querySelectorAll('a');
+
+        // 创建 IntersectionObserver 来监听标题元素的可见性
+        const headerObserver = new IntersectionObserver(
+            (entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // 标题进入视图，添加高亮
+                        const id = entry.target.id;
+                        tocLinks.forEach(link => {
+                            if (link.getAttribute('href') === '#' + id) {
+                                // 移除其他链接的active状态
+                                tocLinks.forEach(l => l.classList.remove('active'));
+                                // 为当前链接添加active状态
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            },
+            {
+                // 观察器选项：标题进入视图区域20%时触发
+                rootMargin: '-50px 0px -70% 0px',
+                threshold: 0
+            }
+        );
+
+        // 观察所有标题元素
+        headers.forEach(header => {
+            headerObserver.observe(header);
+        });
+
+        // 滚动时更新高亮（作为IntersectionObserver的补充）
+        let scrollTimeout;
+        window.addEventListener('scroll', () => {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                let currentId = '';
+                const scrollPosition = window.scrollY + 100; // 偏移量
+                
+                // 找到当前滚动位置对应的最接近的标题
+                headers.forEach(header => {
+                    if (header.offsetTop <= scrollPosition) {
+                        currentId = header.id;
+                    }
+                });
+                
+                if (currentId) {
+                    tocLinks.forEach(link => {
+                        if (link.getAttribute('href') === '#' + currentId) {
+                            tocLinks.forEach(l => l.classList.remove('active'));
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            }, 50);
+        });
+
+    </script>
 
 
 </body>
